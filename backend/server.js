@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import cookieParser from 'cookie-parser'; 
 import reservationRoutes from './routes/reservationRoute.js'
 import restaurantRoutes from './routes/restaurantRoutes.js'
+import mongoose from 'mongoose'
 import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
