@@ -39,4 +39,13 @@ app.use("/reservation", reservationRoutes)
 app.use("/admin/restaurant", restaurantRoutes); 
 app.use("/restaurant", restaurantRoutes)
 
- 
+ // Example for Express.js
+app.get('/test-db-connection', async (req, res) => {
+    try {
+      // Attempt a simple database operation
+      const result = await db.query('SELECT 1'); // Simple query
+      res.status(200).json({ success: true, message: 'Database connected' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
