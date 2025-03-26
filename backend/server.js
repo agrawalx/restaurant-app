@@ -21,7 +21,8 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
     "https://restaurant-app-zry4.vercel.app",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://restaurant-app-zry4-git-main-yash-agrawal-s-projects.vercel.app"
 ];
 
 app.use(
