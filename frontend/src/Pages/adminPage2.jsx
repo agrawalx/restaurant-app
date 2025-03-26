@@ -56,7 +56,7 @@ export default function Admin() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/admin/restaurant",
+        "http://localhost:5000/admin/restaurant/",
         formData,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       ); 

@@ -34,9 +34,9 @@ app.use(
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser()); 
-app.use("/", authRoutes); 
+app.use("", authRoutes); 
 app.use("/reservation", reservationRoutes)
 app.use("/admin/restaurant", restaurantRoutes); 
 app.use("/restaurant", restaurantRoutes)
 
-
+ 
