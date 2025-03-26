@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const [values, setValues] = useState({
@@ -10,6 +11,7 @@ export default function Register() {
     password: "",
     isOwner: false,
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +20,7 @@ export default function Register() {
         ...values,
       });
       toast.success("Registration successful!");
+      navigate("/login")
     } catch (error) {
       toast.error("Registration failed. Please try again.");
       console.log(error);
