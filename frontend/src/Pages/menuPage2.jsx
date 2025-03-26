@@ -8,7 +8,7 @@ const UserMenuPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/admin/restaurant/${id}/menu`)
+        axios.get(`https://restaurant-app-nu-six.vercel.app/admin/restaurant/${id}/menu`)
             .then(response => setMenuItems(response.data))
             .catch(error => console.error("Error fetching menu:", error));
     }, [id]);

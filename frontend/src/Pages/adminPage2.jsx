@@ -14,7 +14,7 @@ export default function Admin() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/admin", { withCredentials: true });
+        const res = await axios.get("https://restaurant-app-nu-six.vercel.app/admin", { withCredentials: true });
 
         if (res.data.status && res.data.role === "owner") {
           setUsername(res.data.name)
@@ -31,7 +31,7 @@ export default function Admin() {
 
     const fetchRestaurant = async (ownerId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/admin/restaurant/owner/${ownerId}`);
+            const res = await axios.get(`https://restaurant-app-nu-six.vercel.app/admin/restaurant/owner/${ownerId}`);
             if (res.data.restaurant) {
                 navigate(`/admin/restaurant/${res.data.restaurant._id}`);
             }

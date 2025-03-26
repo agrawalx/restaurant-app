@@ -28,7 +28,7 @@ const RestaurantList = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/restaurant/");
+        const response = await axios.get("https://restaurant-app-nu-six.vercel.app/restaurant/");
         setRestaurants(response.data);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
@@ -54,7 +54,7 @@ const RestaurantList = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/reservation/", {
+      await axios.post("https://restaurant-app-nu-six.vercel.app/reservation/", {
         userId: userId,
         restaurantId: selectedRestaurant._id,
         date: reservation.date,

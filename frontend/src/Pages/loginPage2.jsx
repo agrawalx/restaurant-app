@@ -14,7 +14,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:5000/login", values, {
+      const { data } = await axios.post("https://restaurant-app-nu-six.vercel.app/login", values, {
         withCredentials: true
       });
 
@@ -32,7 +32,6 @@ export default function Login() {
       console.log(error)
     }
   };
-
   return (
     <div className="login-page">
       <div className="login-container">

@@ -8,7 +8,7 @@ const AdminRestaurantPage = () => {
     const [reservations, setReservations] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/reservation/restaurant/${id}`, {withCredentials: true})
+        axios.get(`https://restaurant-app-nu-six.vercel.app/reservation/restaurant/${id}`, {withCredentials: true})
             .then(response => {
                 setReservations(Array.isArray(response.data) ? response.data : []);
             })
@@ -19,7 +19,7 @@ const AdminRestaurantPage = () => {
     }, [id]);
 
     const handleUpdateStatus = (id, status) => {
-        axios.put(`http://localhost:5000/reservation/${id}`, { status })
+        axios.put(`https://restaurant-app-nu-six.vercel.app/reservation/${id}`, { status })
             .then((response) => {
                 setReservations(reservations.map(res => 
                     res._id === id ? { ...res, status: response.data.status } : res
