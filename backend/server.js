@@ -39,13 +39,25 @@ app.use("/reservation", reservationRoutes)
 app.use("/admin/restaurant", restaurantRoutes); 
 app.use("/restaurant", restaurantRoutes)
 
- // Example for Express.js
+
 app.get('/test-db-connection', async (req, res) => {
     try {
-      // Attempt a simple database operation
-      const result = await db.query('SELECT 1'); // Simple query
-      res.status(200).json({ success: true, message: 'Database connected' });
+        // For MongoDB, you can ping the database
+        await mongoose.connection.db.admin().ping();
+        res.status(200).json({ 
+            success: true, 
+            message: 'Database connected',
+            dbHost: mongoose.connection.host,
+            dbName: mongoose.connection.name
+        });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ 
+            success: false, 
+            message: error.message,
+            error: {
+                stack: error.stack,
+                connectionStatus: mongoose.connection.readyState
+            }
+        });
     }
-  });
+});
