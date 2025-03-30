@@ -1,32 +1,43 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/db.js';
+import User from './User.js';
+import Restaurant from './Restaurant.js';
 
-const reservationSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+const Reservation = sequelize.define("Reservation", {
+    id: { 
+        type: DataTypes.INTEGER, 
+        autoIncrement: true, 
+        primaryKey: true 
     },
-    restaurant: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Restaurant',
-        required: true
+    user_id: { 
+        type: DataTypes.INTEGER, 
+        allowNull: false, 
+        references: { model: User, key: "id" } 
     },
-    time: {
-        type: String,
-        required: true,
+    restaurant_id: { 
+        type: DataTypes.INTEGER, 
+        allowNull: false, 
+        references: { model: Restaurant, key: "id" } 
     },
-    date: {
-        type: Date,
-        required: true
+    time: { 
+        type: DataTypes.STRING, 
+        allowNull: false 
     },
-    status: {
-        type: String,
-        enum: ['pending', 'confirmed', 'cancelled'],
-        default: 'pending'
+    date: { 
+        type: DataTypes.DATEONLY, 
+        allowNull: false 
+    },
+    status: { 
+        type: DataTypes.ENUM("pending", "confirmed", "cancelled"), 
+        defaultValue: "pending" 
     }
-}, {
-    timestamps: true
 });
 
-const Reservation = mongoose.model('Reservation', reservationSchema);
+// Define Relationships
+Reservation.belongsTo(User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+User.hasMany(Reservation, { foreignKey: 'user_id' });
+
+Reservation.belongsTo(Restaurant, { foreignKey: 'restaurant_id', onDelete: 'CASCADE' });
+Restaurant.hasMany(Reservation, { foreignKey: 'restaurant_id' });
+
 export default Reservation;

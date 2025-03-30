@@ -1,21 +1,23 @@
 import Reservation from '../models/Reservation.js';
 import { sendEmail } from '../utils/emailService.js';
 import User from '../models/User.js'
+import Restaurant from '../models/Restaurant.js';
 export const createReservationRequest = async (req,res) => {
     try {
         const {userId, restaurantId, time,date} = req.body;
+        console.log(userId);
+        console.log(restaurantId);
         if (!userId || !restaurantId || !time || !date) {
             return res.status(404).json({message: "All fields are required"})
         }
-        const newReservation = new Reservation({
-            user: userId, 
-            restaurant: restaurantId, 
-            date,
-            time, 
+        const newReservation = await Reservation.create({
+            user_id : userId,
+            restaurant_id :restaurantId, 
+            date: date,
+            time: time, 
             status: "pending", 
         })
 
-        await newReservation.save();
         res.status(201).json({message:"reservation request sent", reservation: newReservation})
     } catch (error) {
         console.log("error creating reservation"); 
@@ -46,9 +48,14 @@ export const updateReservation = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body; 
-        const reservation = await Reservation.findById(id).populate("user");
-        const updatedReservation = await Reservation.findByIdAndUpdate(id, { status }, { new: true });
-
+        const reservation = await Reservation.findByPk(id, {
+            include: { model: User, attributes: ["name", "email"] } ,// Equivalent to Mongoose populate()
+            include: {model :Restaurant, attributes: ["name"]}
+        });
+        if (!reservation) {
+            return res.status(404).json({ message: "Reservation not found" });
+        }
+        const updatedReservation = await reservation.update({ status }, { where: { id } });
 
         if (!updatedReservation) {
             return res.status(404).json({ message: "Reservation not found" });
@@ -56,9 +63,9 @@ export const updateReservation = async (req, res) => {
 
         console.log(process.env.EMAIL_USER)
         console.log(process.env.EMAIL_PASS)
-        const userEmail = reservation.user.email;
+        const userEmail = reservation.User.email;
         const subject = `Your Reservation Status: ${status}`;
-        const message = `Hello ${reservation.user.name},\n\nYour reservation at ${reservation.restaurant} has been ${status}.\n\nThank you!`;
+        const message = `Hello ${reservation.User.name},\n\nYour reservation at ${reservation.Restaurant.name} has been ${status}.\n\nThank you!`;
 
         sendEmail(userEmail, subject, message);
 
@@ -72,7 +79,13 @@ export const getPendingReservations = async (req, res) => {
     try {
         console.log("Received request params:", req.params);
         const { id } = req.params;
-        const reservations = await Reservation.find({ restaurant: id});
+        const reservations = await Reservation.findAll({
+            where: { restaurant_id: id, status: "pending" },
+            include: {
+                model: User,
+                attributes: ["id", "name", "email"] // Fetch user details
+            }
+        });
         res.status(200).json(reservations);
     } catch (error) {
         res.status(500).json({ message: "Error fetching reservations", error: error.message });

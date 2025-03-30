@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import reservationRoutes from './routes/reservationRoute.js';
 import restaurantRoutes from './routes/restaurantRoutes.js';
 import path from "path";
-
+import { sequelize } from './config/db.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,19 +33,28 @@ app.use(
 );
 
 // Connect to database first
-let dbConnection;
-try {
-    dbConnection = await connectDB();
-    console.log('Database connection established');
-} catch (error) {
-    console.error('Failed to connect to database:', error);
-    process.exit(1);
-}
+const startServer = async () => {
+    try {
+        await connectDB(); // Establish DB connection
+        console.log('✅ Database connection established');
 
-// Start server only after DB connection
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+        // Sync models with database
+        await sequelize.sync({ force: false }); 
+        console.log('✅ Database models synchronized');
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error('❌ Failed to connect to database:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
+
+
 
 // Routes
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));

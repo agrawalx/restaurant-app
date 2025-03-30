@@ -9,14 +9,14 @@ export default function AdminMenu() {
     const { id } = useParams();
 
     useEffect(() => {
-        axios.get(`https://restaurant-app-nu-six.vercel.app/admin/restaurant/${id}/menu`)
+        axios.get(`http://localhost:5000/admin/restaurant/${id}/menu`)
             .then(response => setMenuItems(response.data))
             .catch(error => console.error("Error fetching menu:", error));
     }, [id]);
     
     const handleAddMenuItem = async () => {
         try {
-            const res = await axios.post(`https://restaurant-app-nu-six.vercel.app/restaurant/${id}/menu`, {
+            const res = await axios.post(`http://localhost:5000/restaurant/${id}/menu`, {
                 name: menuName,
                 price: menuPrice
             });
@@ -26,7 +26,7 @@ export default function AdminMenu() {
                 setMenuName("");
                 setMenuPrice("");
                 // Refresh menu items after adding new one
-                const updatedMenu = await axios.get(`https://restaurant-app-nu-six.vercel.app/admin/restaurant/${id}/menu`);
+                const updatedMenu = await axios.get(`http://localhost:5000/admin/restaurant/${id}/menu`);
                 setMenuItems(updatedMenu.data);
             }
         } catch (error) {

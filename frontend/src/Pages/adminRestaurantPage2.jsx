@@ -8,7 +8,7 @@ const AdminRestaurantPage = () => {
     const [reservations, setReservations] = useState([]);
 
     useEffect(() => {
-        axios.get(`https://restaurant-app-nu-six.vercel.app/reservation/restaurant/${id}`, {withCredentials: true})
+        axios.get(`http://localhost:5000/reservation/restaurant/${id}`, {withCredentials: true})
             .then(response => {
                 setReservations(Array.isArray(response.data) ? response.data : []);
             })
@@ -19,10 +19,10 @@ const AdminRestaurantPage = () => {
     }, [id]);
 
     const handleUpdateStatus = (id, status) => {
-        axios.put(`https://restaurant-app-nu-six.vercel.app/reservation/${id}`, { status })
+        axios.put(`http://localhost:5000/reservation/${id}`, { status })
             .then((response) => {
                 setReservations(reservations.map(res => 
-                    res._id === id ? { ...res, status: response.data.status } : res
+                    res.id === id ? { ...res, status: response.data.status } : res
                 ));
             })
             .catch(error => console.error("Error updating reservation:", error));
@@ -72,13 +72,13 @@ const AdminRestaurantPage = () => {
                                             {reservation.status === "pending" && (
                                                 <div className="action-buttons">
                                                     <button 
-                                                        onClick={() => handleUpdateStatus(reservation._id, "approved")}
+                                                        onClick={() => handleUpdateStatus(reservation.id, "approved")}
                                                         className="approve-button"
                                                     >
                                                         Approve
                                                     </button>
                                                     <button 
-                                                        onClick={() => handleUpdateStatus(reservation._id, "cancelled")}
+                                                        onClick={() => handleUpdateStatus(reservation.id, "cancelled")}
                                                         className="cancel-button"
                                                     >
                                                         Cancel

@@ -1,32 +1,16 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/db.js';
+import User from './User.js';
 
-const menuSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-});
+const Restaurant = sequelize.define('Restaurant', {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    name: { type: DataTypes.STRING(255), allowNull: false },
+    photo: { type: DataTypes.TEXT, allowNull: false },
+    // available_tables: { type: DataTypes.INTEGER, allowNull: false }
+}); 
 
-const restaurantSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    ownerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    photo: { 
-        type: String,
-        required: true 
-    }, // Restaurant image URL
-    menu: [menuSchema], // Array of menu items
-    availableTables: { 
-        type: Number, 
-        required: true 
-    },
-}, {
-    timestamps: true
-});
+// Define Relationship (One User owns Many Restaurants)
+Restaurant.belongsTo(User, { foreignKey: 'owner_id', onDelete: 'CASCADE' });
+User.hasMany(Restaurant, { foreignKey: 'owner_id' });
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 export default Restaurant;

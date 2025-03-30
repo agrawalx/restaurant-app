@@ -28,7 +28,7 @@ const RestaurantList = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get("https://restaurant-app-nu-six.vercel.app/restaurant/");
+        const response = await axios.get("http://localhost:5000/restaurant/");
         setRestaurants(response.data);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
@@ -54,9 +54,9 @@ const RestaurantList = () => {
       return;
     }
     try {
-      await axios.post("https://restaurant-app-nu-six.vercel.app/reservation/", {
+      await axios.post("http://localhost:5000/reservation/", {
         userId: userId,
-        restaurantId: selectedRestaurant._id,
+        restaurantId: selectedRestaurant.id,
         date: reservation.date,
         time: reservation.time,
       });
@@ -111,7 +111,7 @@ const RestaurantList = () => {
                     <Button
                       variant="outlined"
                       color="secondary"
-                      onClick={() => navigate(`/restaurant/${restaurant._id}/menu`)}
+                      onClick={() => navigate(`/restaurant/${restaurant.id}/menu`)}
                       className="secondary-button"
                     >
                       SEE MENU

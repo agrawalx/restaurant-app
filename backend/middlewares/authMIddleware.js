@@ -10,7 +10,7 @@ export const checkUser = async (req,res,next) => {
                 next(); 
             } else {
                 console.log("verified")
-                const user = await User.findById(decodedToken.userId); 
+                const user = await User.findByPk(decodedToken.userId); 
                 if (user.role === "owner") {
                     console.log("welcome")
                     res.json({name: user.name, status: true, user: user.email, role: "owner", userId : decodedToken.userId})
@@ -38,7 +38,7 @@ export const checkOwner = async (req, res, next) => {
                 return res.status(403).json({ status: false, message: "Invalid token" });
             }
 
-            const user = await User.findById(decodedToken.userId);
+            const user = await User.findByPk(decodedToken.userId);
             if (!user || user.role !== "owner") {
                 return res.status(403).json({ status: false, message: "Access denied: Not an owner" });
             }

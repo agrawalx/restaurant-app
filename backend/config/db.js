@@ -1,12 +1,20 @@
-import mongoose from 'mongoose'; 
+import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
 
-export const connectDB = async() => {
+dotenv.config(); // Load environment variables
+
+export const sequelize = new Sequelize(process.env.POSTGRES_URI, {
+    dialect: 'postgres',
+    logging: false, // Set to true if you want to see raw SQL queries in the console
+});
+
+export const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI); 
-        console.log(`MongoDB connected: ${conn.connection.host}`)
-
+        await sequelize.authenticate();
+        console.log('✅ PostgreSQL connected successfully');
     } catch (error) {
-        console.error(`Error ${error.message}`);
-        process.exit(1); // 1 means failure 
+        console.error(`❌ Database connection failed: ${error.message}`);
+        process.exit(1); // Exit on failure
     }
-}
+};
+

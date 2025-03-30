@@ -4,6 +4,7 @@ import multer from 'multer'
 import { fileURLToPath } from "url";
 import fs from "fs";
 import path from "path";
+import Menu from "../models/Menu.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,14 +41,12 @@ export const createRestaurant = async (req, res) => {
             return res.status(400).json({ error: "All fields are required, including a photo" });
         }
 
-        const newRestaurant = new Restaurant({
-            ownerId,
-            name,
-            photo,  // Store image path in DB
-            availableTables,
+        const newRestaurant = await Restaurant.create({
+            owner_id :ownerId,
+            name: name,
+            photo: photo,  // Store image path in DB
         });
 
-        await newRestaurant.save();
         res.status(201).json({ message: "Restaurant created successfully", restaurant: newRestaurant });
 
     } catch (error) {
@@ -75,7 +74,7 @@ export const deleteRestaurant = async (req, res) => {
 export const getRestaurantList = async (req, res) => {
     try {
         console.log("getting restaurants")
-        const restaurants = await Restaurant.find();
+        const restaurants = await Restaurant.findAll();
         res.status(200).json(restaurants);
     } catch (error) {
         console.error("Error fetching restaurant list:", error);
@@ -91,10 +90,7 @@ export const getRestaurantByOwner = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: "Owner ID is required" });
         }
-        if (!mongoose.isValidObjectId(id)) {
-            return res.status(400).json({ error: "Invalid Owner ID format" });
-        }
-        const restaurant = await Restaurant.findOne({ ownerId: id }); 
+        const restaurant = await Restaurant.findOne({ where: {owner_id: id} }); 
         if (!restaurant) {
             return res.status(404).json({ message: "No Restaurant found" });
         }
@@ -112,14 +108,18 @@ export const addItemToMenu = async (req,res) => {
         if (!name || !price) {
             return res.status(400).json({ error: "Name, price are required" });
         } 
-        const restaurant = await Restaurant.findById(id); 
+        const restaurant = await Restaurant.findByPk(id); 
         if (!restaurant) {
             return res.status(404).json({error: "restaurant not found"})
         }
-        restaurant.menu.push({ name, price});
-        await restaurant.save();
 
-        res.status(201).json({ message: "Menu item added successfully", restaurant });
+        const newMenuItem = await Menu.create({
+            restaurant_id: id,
+            name,
+            price
+        });
+
+        res.status(201).json({ message: "Menu item added successfully", menuItem: newMenuItem });
     } catch (error) {
         console.error("Error adding menu item:", error);
         res.status(500).json({ error: "Server error" });
@@ -130,8 +130,11 @@ export const getMenu = async (req, res) => {
     
     try {
         const {id} = req.params;
-        const restaurant = await Restaurant.findById(id);
-        res.json(restaurant.menu);
+        const menuItems = await Menu.findAll({
+            where: { restaurant_id: id },
+            attributes: ['id', 'name', 'price'] // Fetch only required fields
+        });
+        res.status(200).json(menuItems);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch menu" });
     }
